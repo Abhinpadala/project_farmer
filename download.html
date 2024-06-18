@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt Downloaded</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background-image: url('paddy.jpg'); /* Add the URL to your background image */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+        }
+
+        #message {
+            max-width: 80%;
+            margin-top: 50px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent background for better readability */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="message">
+        <h1>Receipt Downloaded</h1>
+        <div id="content"></div>
+    </div>
+
+    <script>
+        // Function to retrieve URL parameters
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                product: params.get('product'),
+                price: params.get('price')
+            };
+        }
+
+        // Retrieve URL parameters
+        const { product, price } = getUrlParams();
+
+        // Display message
+        const contentDiv = document.getElementById('content');
+        contentDiv.textContent = `Your product "${decodeURIComponent(product)}" is approved with the fair price of ${decodeURIComponent(price)}.`;
+    </script>
+</body>
+</html>

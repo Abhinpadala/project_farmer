@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: background-image 1s ease-in-out;
+        }
+
+        .container {
+            width: 300px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"], input[type="button"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover, input[type="button"]:hover {
+            background-color: darkgreen;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Farmers Market</h2>
+        <h2>Login</h2>
+        <form id="loginForm" action="flogin.php" method="POST">
+            <input type="text" id="mobileNumber" name="mobile_number" placeholder="Mobile Number" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <input type="submit" value="Login">
+            <input type="button" value="Register" onclick="window.location.href='sign.html';">
+        </form>
+        <div class="forgot-password">
+            <a href="forgot-password.html">Forgot Password?</a>
+        </div>
+    </div>
+
+    <script>
+        var backgrounds = [
+            'url(palmoil.jpg)',
+            'url(tobacco.jpg)',
+            'url(login3.jpg)'
+        ];
+
+        var currentIndex = 0;
+
+        function changeBackground() {
+            document.body.style.backgroundImage = backgrounds[currentIndex];
+            currentIndex = (currentIndex + 1) % backgrounds.length;
+        }
+
+        setInterval(changeBackground, 5000);
+        changeBackground();
+    </script>
+</body>
+</html>

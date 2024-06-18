@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmers Market - Product Info</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            background-color: #f5f5f5;
+            background-image: url('base_price1.jpg');
+            background-size: cover;
+            background-position: center;
+            animation: changeBackground 10s infinite alternate;
+        }
+
+        @keyframes changeBackground {
+            0% {
+                background-image: url('base_price2.jpg');
+            }
+            50% {
+                background-image: url('wheat.jpg');
+            }
+            100% {
+                background-image: url('sunflower.jpg');
+            }
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            column-gap: 40px;
+            padding: 30px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form h1 {
+            grid-column: span 2;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form input, .form select, .form button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form input[readonly], .form select[readonly] {
+            background-color: #f5f5f5;
+        }
+
+        .form button {
+            background-color: green;
+            color: white;
+            border: none;
+            transition: background-color 0.3s;
+            grid-column: span 2;
+        }
+
+        .form button:hover {
+            background-color: darkgreen;
+        }
+
+        .form .message {
+            grid-column: span 2;
+            display: none;
+            margin-top: 20px;
+            color: green;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form class="form" id="priceForm" method="POST">
+            <h1>Base Price Fixing</h1>
+
+            <input type="text" id="id" name="id" placeholder="ID" readonly>
+            <input type="text" id="name" name="name" placeholder="Name" readonly>
+            <input type="text" id="mobile_number" name="mobile_number" placeholder="Mobile Number" readonly>
+            <input type="text" id="aadhar_number" name="aadhar_number" placeholder="Aadhar Number" readonly>
+            <input type="text" id="survey" name="survey" placeholder="Survey" readonly>
+            <input type="text" id="product" name="product" placeholder="Product" readonly>
+            <input type="text" id="grade" name="grade" placeholder="Grade" readonly>
+            <input type="number" id="quantity" name="quantity" placeholder="Quantity" readonly>
+
+            <input type="number" id="price" name="price" placeholder="Enter the base price">
+            <input type="number" id="demandFactor" name="demandFactor" placeholder="Enter Demand Factor (0-100)">
+            <input type="number" id="supplyFactor" name="supplyFactor" placeholder="Enter Supply Factor (0-100)">
+            <input type="number" id="externalFactor" name="externalFactor" placeholder="Enter External Factor">
+            <input type="number" id="costFactor" name="costFactor" placeholder="Enter Cost Factor">
+
+            <button type="submit">Submit</button>
+            <div class="message" id="message">The Price is approved</div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+
+            document.getElementById('id').value = urlParams.get('id');
+            document.getElementById('name').value = urlParams.get('name');
+            document.getElementById('mobile_number').value = urlParams.get('mobile_number');
+            document.getElementById('aadhar_number').value = urlParams.get('aadhar_number');
+            document.getElementById('survey').value = urlParams.get('survey');
+            document.getElementById('product').value = urlParams.get('product');
+            document.getElementById('grade').value = urlParams.get('grade');
+            document.getElementById('quantity').value = urlParams.get('quantity');
+        });
+
+        document.querySelector("form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            var product = document.getElementById("product").value;
+            var grade = document.getElementById("grade").value;
+            var quantity = document.getElementById("quantity").value;
+            var price = document.getElementById("price").value;
+            var demandFactor = document.getElementById("demandFactor").value;
+            var supplyFactor = document.getElementById("supplyFactor").value;
+            var externalFactor = document.getElementById("externalFactor").value;
+            var costFactor = document.getElementById("costFactor").value;
+
+            if (!product || !grade || !quantity || !price || !demandFactor || !supplyFactor || !externalFactor || !costFactor) {
+                alert("Please fill all fields");
+                return;
+            }
+
+            demandFactor = parseFloat(demandFactor);
+            supplyFactor = parseFloat(supplyFactor);
+            externalFactor = parseFloat(externalFactor);
+            costFactor = parseFloat(costFactor);
+
+            var demandAdjustments = [
+                { min: 0, max: 10, adjustment: 5 },
+                { min: 10, max: 25, adjustment: 7 },
+                { min: 25, max: 50, adjustment: 10 },
+                { min: 50, max: 75, adjustment: 15 },
+                { min: 75, max: 100, adjustment: 20 }
+            ];
+
+            var supplyAdjustments = [
+                { min: 0, max: 10, adjustment: -1 },
+                { min: 10, max: 25, adjustment: -3 },
+                { min: 25, max: 50, adjustment: -5 },
+                { min: 50, max: 75, adjustment: -7 },
+                { min: 75, max: 100, adjustment: -10 }
+            ];
+
+            var adjustmentAdjustmentsPositive = [
+                { min: 0, max: 10, adjustment: 1 },
+                { min: 10, max: 25, adjustment: 2 },
+                { min: 25, max: 50, adjustment: 5 },
+                { min: 50, max: 75, adjustment: 13 },
+                { min: 75, max: 90, adjustment: 17 },
+                { min: 90, max: 100, adjustment: 20 }
+            ];
+
+            var adjustmentAdjustmentsNegative = [
+                { min: 0, max: 10, adjustment: -1 },
+                { min: 10, max: 25, adjustment: -2 },
+                { min: 25, max: 50, adjustment: -5 },
+                { min: 50, max: 75, adjustment: -13 },
+                { min: 75, max: 90, adjustment: -17 },
+                { min: 90, max: 100, adjustment: -20 }
+            ];
+
+            function getPercentageAdjustment(factor, adjustments) {
+                for (const range of adjustments) {
+                    if (factor >= range.min && factor <= range.max) {
+                        return range.adjustment;
+                    }
+                }
+                return 0;
+            }
+
+            var demandAdjustment = getPercentageAdjustment(demandFactor, demandAdjustments);
+            var supplyAdjustment = getPercentageAdjustment(supplyFactor, supplyAdjustments);
+
+            var adjustmentFactor = demandAdjustment + supplyAdjustment + externalFactor + costFactor;
+            var adjustmentPercentage = adjustmentFactor >= 0 ? 
+                getPercentageAdjustment(adjustmentFactor, adjustmentAdjustmentsPositive) :
+                getPercentageAdjustment(-adjustmentFactor, adjustmentAdjustmentsNegative);
+
+            var adjustedPrice = parseFloat(price) * (1 + adjustmentPercentage / 100);
+
+            var adjustedPriceInput = document.createElement("input");
+            adjustedPriceInput.type = "hidden";
+            adjustedPriceInput.name = "adjustedPrice";
+            adjustedPriceInput.value = adjustedPrice.toFixed(2);
+            this.appendChild(adjustedPriceInput);
+
+            var formData = new FormData(this);
+
+            fetch('baseprice.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("message").style.display = 'block';
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>

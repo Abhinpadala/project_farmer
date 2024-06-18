@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Login</title>
+  <style>
+    @keyframes changeBackground {
+      0% { background-image: url('farmer_gov3.jpg'); }
+      33% { background-image: url('market2.jpg'); }
+      66% { background-image: url('wheat.jpg'); }
+      100% { background-image: url('farmer_gov3.jpg'); }
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      animation: changeBackground 15s infinite alternate;
+    }
+
+    .login-container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 350px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    input[type="text"], input[type="password"], input[type="captcha"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+      background-color: green;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .login-btn:hover {
+      background-color: darkgreen;
+    }
+
+    .captcha-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+      font-size: 20px;
+    }
+
+    .captcha-text {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .refresh-btn {
+      background-color: green;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Government Portal</h2>
+    <form action="process_login.php" method="POST">
+      <input type="text" name="mobile_number" placeholder="Login ID" required>
+      <br>
+      <input type="password" name="password" placeholder="Password" required>
+      <br>
+      <div class="captcha-container">
+        <span class="captcha-text" id="captchaText"></span>
+        <input type="text" id="captchaInput" name="captcha" placeholder="Enter Captcha" required>
+        <button type="button" class="refresh-btn" onclick="refreshCaptcha()">Refresh</button>
+      </div>
+      <br>
+      <input type="submit" value="Login" class="login-btn">
+    </form>
+    
+    <a href="forgot_gov.html">Forgot Password?</a>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      refreshCaptcha();
+    });
+
+    function refreshCaptcha() {
+      var symbols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      var captchaText = '';
+
+      for (var i = 0; i < 6; i++) {
+        captchaText += symbols.charAt(Math.floor(Math.random() * symbols.length));
+      }
+
+      document.getElementById('captchaText').innerText = captchaText;
+    }
+  </script>
+</body>
+</html>

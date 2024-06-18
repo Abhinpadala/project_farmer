@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmers Market</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('pavan.jpg'); /* Default background */
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.5s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: black;
+            padding: 10px;
+            background-color: white;
+            display: block; /* Ensure it's a block-level element */
+            margin: 0 auto; /* Center horizontally */
+            margin-bottom: 20px; /* Add some margin between the title and the form */
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: center; /* Center the form horizontally */
+            align-items: center;
+            height: 100%;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column; /* Arrange items in a column */
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent background */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .form input, .form select {
+            width: 300px;
+            height: 30px;
+            margin: 10px;
+            border: 1px solid gray;
+            border-radius: 5px;
+        }
+
+        .form button {
+            width: 200px;
+            height: 40px;
+            margin: 10px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form">
+            <h1>Farmers Market</h1>
+            <form action="submit_form.php" method="POST">
+                <input type="text" name="name" id="name" placeholder="Enter your Name" required>
+                <input type="text" name="mobile_number" id="phone" placeholder="Enter your Mobile Number" required>
+                <input type="text" name="aadhar_number" id="aadhar" placeholder="Enter your Aadhar Number" required>
+                <input type="text" name="survey" id="survey" placeholder="Enter your Survey Number" required>
+                <select name="product" id="product" onchange="changeBackground()" required>
+                    <option value="" disabled selected>Select your product</option>
+                    <option value="Barley">Barley</option>
+                    <option value="Ground Nuts">Ground Nuts</option>
+                    <option value="Horse Gram">Horse Gram</option>
+                    <option value="Maize">Maize</option>
+                    <option value="Paddy">Paddy</option>
+                    <option value="Palm Oil">Palm Oil</option>
+                    <option value="Ragi">Ragi</option>
+                    <option value="Sunflower">Sunflower</option>
+                    <option value="Tobacco">Tobacco</option>
+                    <option value="Wheat">Wheat</option>
+                </select>
+                <select name="grade" id="grade" required>
+                    <option value="" disabled selected>Select grade</option>
+                    <option value="A">Grade A</option>
+                    <option value="B">Grade B</option>
+                </select>
+                <input type="number" name="quantity" id="quantity" placeholder="Enter the quantity in kg" required>
+                <button type="submit" id="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Function to change background image based on the selected product
+        function changeBackground() {
+            var product = document.getElementById("product").value;
+            var backgroundImage = "";
+
+            // Define background images for each product
+            switch (product) {
+                case "Barley":
+                    backgroundImage = "url('barley.jpg')";
+                    break;
+                case "Ground Nuts":
+                    backgroundImage = "url('groundnut.jpg')";
+                    break;
+                case "Horse Gram":
+                    backgroundImage = "url('horsegram.jpg')";
+                    break;
+                case "Maize":
+                    backgroundImage = "url('maize.jpg')";
+                    break;
+                case "Paddy":
+                    backgroundImage = "url('paddyyy.jpg')";
+                    break;
+                case "Palm Oil":
+                    backgroundImage = "url('palmoil.jpg')";
+                    break;
+                case "Ragi":
+                    backgroundImage = "url('ragi.jpg')";
+                    break;
+                case "Sunflower":
+                    backgroundImage = "url('sunflower.jpg')";
+                    break;
+                case "Tobacco":
+                    backgroundImage = "url('tobacco.jpg')";
+                    break;
+                case "Wheat":
+                    backgroundImage = "url('wheat.jpg')";
+                    break;
+                default:
+                    backgroundImage = "none";
+            }
+
+            // Set the background image
+            document.body.style.backgroundImage = backgroundImage;
+        }
+    </script>
+</body>
+</html>

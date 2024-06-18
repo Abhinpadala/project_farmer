@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Button</title>
+  <style>
+    body, html {
+      height: 100%; /* Set height of both body and html to 100% */
+      margin: 0; /* Remove default margin */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-size: cover; /* Cover the entire background */
+      background-repeat: no-repeat; /* No repeat */
+    }
+
+    .button-container {
+      text-align: center; /* Align buttons in the center horizontally */
+    }
+
+    .market-button {
+      display: block; /* Display buttons as block-level elements */
+      padding: 20px 40px; /* Increased padding */
+      font-size: 24px; /* Increased font size */
+      background-color: green; /* Green */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 10px; /* Add space between buttons */
+      width: 200px; /* Set width to ensure all buttons have the same size */
+    }
+
+    .market-button:hover {
+      background-color: #45a049; /* Darker green */
+    }
+  </style>
+</head>
+<body>
+  <div class="button-container">
+    <form action="#">
+      <button type="submit" class="market-button" formaction="loginform1.html">Farmers Login</button>
+      <button type="submit" class="market-button" formaction="govlogin.html">Government Login</button>
+    </form>
+  </div>
+
+  <script>
+    // Array of background image URLs
+    var images = [
+      'farmer_gov1.jpg',
+      'farmer_gov2.jpg',
+      'farmer_gov3.jpg'
+    ];
+
+    // Function to change background image dynamically
+    function changeBackground() {
+      var index = Math.floor(Math.random() * images.length); // Get random index
+      document.body.style.backgroundImage = 'url(' + images[index] + ')'; // Change background image
+    }
+
+    // Call the function initially
+    changeBackground();
+
+    // Call the function every 15 seconds to change the background image
+    setInterval(changeBackground, 15000);
+  </script>
+</body>
+</html>

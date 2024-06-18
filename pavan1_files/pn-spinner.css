@@ -1,0 +1,19 @@
+.pdc-spinner-wrapper {
+  animation-name: spin;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 400;
+  color: #0a0e12;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

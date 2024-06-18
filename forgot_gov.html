@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Forgot Password</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            transition: background-image 1s ease-in-out;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+
+        .container {
+            width: 300px;
+            margin: auto;
+            margin-top: 100px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: black;
+        }
+
+        input[type="tel"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .custom-button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .custom-button:hover {
+            background-color: green;
+        }
+
+        .custom-button.green {
+            background-color: green;
+        }
+
+        #otpConfirmation {
+            font-size: 14px;
+            color: #333;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Forgot Password</h2>
+        <form id="forgotPasswordForm">
+            <input type="text" name="loginID" id="loginIDInput" placeholder="Login ID" required>
+            <button type="button" id="getOTPButton" class="custom-button green">Get OTP</button>
+            <input type="text" name="otp" placeholder="Enter OTP" style="display: none;" required>
+            <button type="submit" id="verifyOTPButton" style="display: none;" class="custom-button green">Verify OTP</button>
+            <span id="otpConfirmation"></span>
+        </form>
+    </div>
+
+    <script>
+        const backgroundImages = [
+            'url("market2.jpg")',
+            'url("forgot_gov2.jpg")',
+            'url("forgot_gov3.jpg")'
+        
+        ];
+
+        let currentImageIndex = 0;
+
+        function changeBackgroundImage() {
+            currentImageIndex = (currentImageIndex + 1) % backgroundImages.length;
+            document.body.style.backgroundImage = backgroundImages[currentImageIndex];
+        }
+
+        setInterval(changeBackgroundImage, 5000); // Change image every 5 seconds
+
+        document.getElementById('getOTPButton').addEventListener('click', function() {
+            const loginID = document.getElementById('loginIDInput').value;
+
+            // Validate login ID
+            if (loginID.trim() !== '') {
+                // Generate random 4-digit OTP
+                const otp = Math.floor(1000 + Math.random() * 9000);
+
+                // Here you should send an AJAX request to your server to send the OTP to the login ID
+                // For demonstration purposes, we'll simulate sending the OTP
+                alert("OTP sent to " + loginID);
+                // Display a confirmation message instead of showing the OTP
+                document.getElementById('otpConfirmation').innerText = "OTP sent to " + loginID;
+
+                // Show the OTP input field and change the button to verify OTP
+                document.querySelector('input[name="otp"]').style.display = 'inline-block';
+                document.getElementById('verifyOTPButton').style.display = 'inline-block';
+                this.style.display = 'none'; // Hide the "Get OTP" button
+            } else {
+                alert("Please enter your Login ID.");
+            }
+        });
+
+        document.getElementById('forgotPasswordForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+            const enteredOTP = document.querySelector('input[name="otp"]').value;
+
+            // Here you should send an AJAX request to your server to verify the entered OTP
+            // For demonstration purposes, we'll simulate a successful verification
+            if (enteredOTP === '1234') { // Replace '1234' with the actual OTP verification logic
+                alert("OTP verified successfully. You can reset your password now.");
+                // Redirect to the password reset page
+                window.location.href = 'reset_password.html';
+            } else {
+                alert("Invalid OTP. Please try again.");
+            }
+        });
+
+        // Initialize background image
+        document.body.style.backgroundImage = backgroundImages[currentImageIndex];
+    </script>
+</body>
+</html>

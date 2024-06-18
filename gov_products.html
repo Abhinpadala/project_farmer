@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Market Product Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('wheat.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #006400;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            background-color: #006400;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        button:hover {
+            background-color: #004d00;
+        }
+    </style>
+</head>
+<body>
+    <h1>Government Market Product Details</h1>
+    <table border="1" id="productTable">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Mobile Number</th>
+            <th>Aadhar Number</th>
+            <th>Survey</th>
+            <th>Product</th>
+            <th>Grade</th>
+            <th>Quantity</th>
+            <th>Action</th>
+        </tr>
+    </table>
+
+    <script>
+        async function fetchProducts() {
+            try {
+                const response = await fetch('fetch_govmarket.php');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const data = await response.json();
+                const table = document.getElementById('productTable');
+
+                data.forEach(product => {
+                    const row = document.createElement('tr');
+
+                    Object.keys(product).forEach(key => {
+                        const cell = document.createElement('td');
+                        cell.textContent = product[key];
+                        row.appendChild(cell);
+                    });
+
+                    const actionCell = document.createElement('td');
+                    const approveButton = document.createElement('button');
+                    approveButton.textContent = 'Approve';
+                    approveButton.onclick = () => approveProduct(product);
+
+                    const declineButton = document.createElement('button');
+                    declineButton.textContent = 'Decline';
+                    declineButton.onclick = () => declineProduct(product);
+
+                    actionCell.appendChild(approveButton);
+                    actionCell.appendChild(declineButton);
+
+                    row.appendChild(actionCell);
+                    table.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        }
+
+        function approveProduct(product) {
+            const queryParams = new URLSearchParams(product).toString();
+            window.location.href = 'base_price.html?' + queryParams;
+        }
+
+        async function declineProduct(product) {
+            try {
+                const response = await fetch('decline_product.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(product)
+                });
+                const result = await response.json();
+                alert('Product by ' + product.name + ' has been declined.');
+                location.reload(); // Reload the page to refresh the product list
+            } catch (error) {
+                console.error('Error declining product:', error);
+                alert('Error declining product: ' + error.message);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchProducts);
+    </script>
+</body>
+</html>

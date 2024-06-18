@@ -1,0 +1,756 @@
+
+    var thgpiClientdevice = {
+           "xlarge":"(min-width: 1600px)",
+           "large":"(min-width: 1024px) and (max-width: 1599px)",
+           "small":"(max-width: 767px)",
+           "medium":"(min-width: 768px) and (max-width: 1023px)"
+   };
+   var thgpia = {
+           isMobile: false,
+           isTablet: false,
+           isDesktop: false,
+           isLargeDesktop:false
+   };
+   for ( var type in thgpiClientdevice) {
+       if (window.matchMedia(thgpiClientdevice[type]).matches) {
+           switch (type) {
+           case "xlarge":
+               thgpia.isLargeDesktop=true;
+               break;
+           case "large":
+               thgpia.isDesktop=true;
+               break;
+           case "medium":
+               thgpia.isTablet=true;
+               break;
+           case "small":
+               thgpia.isMobile=true;
+               break;
+           }
+           break;
+       }
+   }
+   function thgpiplatform(){
+       var Platform = thgpia.isMobile == true ? 'MWEB' : 'WEB';		
+       return  Platform;
+   }
+   function thgpicreateCookie(name,value,days) { if (days) {
+        var date = new Date();
+        date.setTime(date.getTime()+(days*24*60*60*1000));
+        var expires = "; expires="+date.toGMTString();
+        }
+        else var expires = "";
+        document.cookie = name+"="+value+expires+"; path=/";
+    }
+    function thgpireadCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+    var thgpiuserplandetails ={"term":'',"resource":'',"packCurrency":'',"packValue":'',"packName" :'',"planDuration" : '',"recurring":false,"paymentmode":''}
+				
+   var dataLayer =  window.dataLayer || [];
+ 
+   
+
+     window.PianoESPConfig = {
+        id: 462
+    };
+     (function () {
+    tp = window["tp"] || [];
+
+    /* Checkout related */
+    /**
+     * Event properties
+     *
+     * chargeAmount - amount of purchase
+     * chargeCurrency
+     * uid
+     * email
+     * expires
+     * rid
+     * startedAt
+     * termConversionId
+     * termId
+     * promotionId
+     * token_list
+     * cookie_domain
+     * user_token
+     *
+     */
+     function onCheckoutComplete(conversion) {
+        try {
+          document.getElementsByClassName("tp-close").length > 0 ? document.getElementsByClassName("tp-close")[0].style.display="none" : null;
+          var ud =  '';
+         var thgpaymentMode = '';
+          try {
+          ud = typeof thgpireadCookie === "function" ? (thgpireadCookie("thgpiuserplandetailscook") != null ? JSON.parse(thgpireadCookie("thgpiuserplandetailscook")): '') : '';
+              thgpaymentMode = typeof thgpireadCookie === "function" ? (thgpireadCookie("thgpipaymentMode") != null ? thgpireadCookie("thgpipaymentMode"): '') : '';
+    } catch (e) {
+         
+    }
+            
+             var dataLayer =  window.dataLayer || [];
+          if(typeof conversion.type !="undefined" && conversion.type === "payment") {
+                var paymentData ={};
+                if(typeof conversion.uid !="undefined"){
+                    paymentData['uid'] = conversion.uid;
+                }
+                if(typeof conversion.email !="undefined"){
+                    paymentData['email'] = conversion.email;
+                }
+                if(typeof conversion.startedAt !="undefined"){
+                    paymentData['subscriptionStartDate'] = new Date(conversion.startedAt).toISOString();
+                }
+                if(typeof conversion.expires !="undefined"){
+                    paymentData['subscriptionEndDate'] = new Date(conversion.expires* 1000).toISOString();
+                }
+                if(typeof conversion.chargeCurrency !="undefined"){
+                    paymentData['packCurrency'] = conversion.chargeCurrency;
+                }
+                if(typeof conversion.rid !="undefined"){
+                    paymentData['resource'] = conversion.rid;
+                }
+                if(typeof conversion.termId !="undefined"){
+                    paymentData['term'] = conversion.termId;
+                }
+            	 if(typeof conversion.paymentId !="undefined"){
+                    paymentData['transactionId'] = conversion.paymentId;
+                }
+                if(typeof conversion.chargeAmount !="undefined"){
+                    paymentData['packValue'] = conversion.chargeAmount.toString();
+                }
+                if(typeof conversion.promotionId !="undefined"){
+                    paymentData['promotionApplied'] = conversion.promotionId != null ? true :false;
+                }
+                paymentData['planDuration'] = typeof ud.planDuration != "undefined" ? ud.planDuration : '';
+                paymentData['packName'] = typeof ud.packName != "undefined" ? ud.packName : '';
+                paymentData['paymentSelected'] = typeof thgpaymentMode != "undefined"  ? thgpaymentMode : '';
+                paymentData['autoRenew'] = (typeof ud.recurring != "undefined" && ud.recurring == true) ? true :false;
+                paymentData['platform'] = thgpiplatform();
+            	var amount = typeof conversion.chargeAmount !="undefined" ? conversion.chargeAmount : 0;
+				if(typeof conversion.chargeCurrency !="undefined" && conversion.chargeCurrency.toLowerCase() == "usd"){
+                  amount = amount * 79;
+                }
+            if(thgpaymentMode != "inbaf"){
+                dataLayer.push({
+                    "event":"charged",
+                    "transactionId":typeof conversion.termConversionId !="undefined" ? conversion.termConversionId : "notransaction",
+                  	"transactionTotal":amount,
+                  	"transactionProducts": [{
+     				 "sku": typeof conversion.termId !="undefined" ? conversion.termId : "nosku",
+      				 "name": typeof ud.packName != "undefined" ? ud.packName : 'noPackname',
+                     "category": typeof conversion.rid !="undefined" ? conversion.rid : 'noCategory',
+                     "price": amount,
+                     "quantity": 1
+   					}],
+                    "data": paymentData
+                });
+            }
+            if (typeof Android != "undefined" && location.pathname == "/appwebview/android/" ) {
+                    if (typeof Android.subscriptionSuccess == "function") {
+                        var appNewtermName = typeof ud.packName != "undefined" ? ud.packName : '';
+                        var appNewtermId = typeof conversion.termId != "undefined" ? conversion.termId : '';
+                        var appNewpricing = typeof conversion.chargeAmount != "undefined" ? conversion.chargeAmount : 0;
+                        var appNewduration =  typeof ud.planDuration != "undefined" ? ud.planDuration : '';
+                        var appNewpaymentMethod = typeof thgpaymentMode != "undefined"  ? thgpaymentMode : '';
+                        var appNewcouponCode = typeof conversion.promotionId != "undefined" ? (conversion.promotionId != null ? true :false) : false;
+                        var appNewemailId = typeof conversion.email != "undefined" ? conversion.email : '';
+                        var appNewmobileNumber = '';
+                        var appNewpaymentType = 'payU';
+                       var appNewCurrency = typeof conversion.chargeCurrency != "undefined" ? conversion.chargeCurrency : ''; 
+                        Android.subscriptionSuccess(appNewtermName, appNewtermId, appNewpricing, appNewduration, appNewpaymentType, appNewcouponCode, appNewemailId, appNewmobileNumber,appNewpaymentMethod,appNewCurrency)
+                    }
+                }
+            }
+            else{
+                var FTData ={};
+                if(typeof conversion.uid !="undefined"){
+                    FTData['uid'] = conversion.uid;
+                }
+                if(typeof conversion.email !="undefined"){
+                    FTData['email'] = conversion.email;
+                }
+                if(typeof conversion.startedAt !="undefined"){
+                    FTData['subscriptionStartDate'] = new Date(conversion.startedAt).toISOString();
+                }
+                if(typeof conversion.expires !="undefined"){
+                    FTData['subscriptionEndDate'] = new Date(conversion.expires* 1000).toISOString();
+                }
+                FTData['platform'] = thgpiplatform();
+                dataLayer.push({
+                    "event":"freetrial_activated",
+                    "data": FTData
+                });
+	 	try {
+       	messageHandler.postMessage("success");
+      }
+      catch(err) {
+        console.error(err)
+      }
+            }
+         updateprofile(conversion)
+         if(location.pathname == '/subscription/amp/'){
+setTimeout(function(){window.close();}, 1000);
+}
+          } catch(e) {
+                  console.error(e);
+          }
+     
+    }
+
+    function onCheckoutExternalEvent() {
+    }
+
+    function onCheckoutClose(event) {
+        
+        /* Default behavior is to refresh the page on successful checkout */
+        if (event && event.state == "checkoutCompleted") {
+          if(location.pathname == '/subscription/amp/'){
+			window.close()
+			}
+          else if(window.location.pathname.indexOf("/subscription/") > -1){
+            location.href= window.location.origin;
+          }
+          else{
+                location.reload();
+            }
+        }
+    }
+
+    function onCheckoutCancel() {
+    }
+
+    function onCheckoutError() {
+    }
+
+    function onCheckoutSubmitPayment() {
+    }
+
+    /* Meter callback */
+    function onMeterExpired() {
+
+    }
+
+    /* Meter callback */
+    function onMeterActive() {
+
+    }
+
+    /* Callback executed when a user must login */
+    function onLoginRequired() {
+        // this is a reference implementation only
+        // your own custom login/registration implementation would
+        // need to return the tinypass-compatible userRef inside the callback
+
+        // mysite.showLoginRegistration(function (tinypassUserRef)
+        // tp.push(["setUserRef", tinypassUserRef]); // tp.offer.startCheckout(params); // }
+        // this will prevent the tinypass error screen from displaying
+
+        return false;
+    }
+
+    /* Callback executed after a tinypassAccounts login */
+    function onLoginSuccess(data) {
+        if(data.registration){  
+            dataLayer.push({
+                              "event":"signup_successful",
+                              "data": { 
+                                  "email":data.params.email,
+                                  "uid":data.params.uid,
+                                  "platform":thgpiplatform()
+                              } 
+                          });
+        
+       
+          }
+          else{
+           if(data.params.confirmed === true){
+              dataLayer.push({
+                              "event":"login_successful",
+                              "data": { 
+                                  "email":data.params.email,
+                                  "uid":data.params.uid,
+                                  "platform":thgpiplatform()
+                              } 
+                          });
+				if (data.source == "PIANOID") {
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 600);
+				}
+              
+            }
+          }
+      tp.amp.login();
+    }
+
+
+    /* Callback executed after an experience executed successfully */
+    function onExperienceExecute(event) {
+    }
+
+    /* Callback executed if experience execution has been failed */
+    function onExperienceExecutionFailed(event) {
+    }
+
+    /* Callback executed if external checkout has been completed successfully */
+    function onExternalCheckoutComplete(event) {
+        /* Default behavior is to refresh the page on successful checkout */
+        location.reload();
+    }
+    function onCheckoutStateChange(stateView){
+        switch (stateView.stateName) {
+			case 'state1': case 'offer':
+                    dataLayer.push({
+                        "event":"plan_shown"
+                    });
+				break;				
+			case 'state2':
+				try {
+                    var thgpiuserplandetailscook ={"term":stateView.term.termId,"resource":stateView.term.resource.rid,"packCurrency":stateView.term.chargeCurrency,"packValue":stateView.term.chargeAmount.toString(),"packName" : stateView.term.name,"planDuration" : stateView.term.firstPeriod,"recurring":stateView.term.forceAutoRenew}
+					thgpicreateCookie("thgpiuserplandetailscook",JSON.stringify(thgpiuserplandetailscook),0.2);
+					thgpiuserplandetails.term = stateView.term.termId;
+                    thgpiuserplandetails.resource=stateView.term.resource.rid;
+                    thgpiuserplandetails.packCurrency=stateView.term.chargeCurrency;
+                    thgpiuserplandetails.packValue=stateView.term.chargeAmount.toString();
+                    thgpiuserplandetails.packName=stateView.term.name;
+                    thgpiuserplandetails.planDuration= stateView.term.firstPeriod;
+                    thgpiuserplandetails.recurring=stateView.term.forceAutoRenew;
+					
+                    dataLayer.push({
+                        "event":"plan_selected",
+                        "data": { 
+                            "planDuration":stateView.term.firstPeriod,
+                            "email":tp.pianoId.getUser() != null ? tp.pianoId.getUser().email : '',
+                            "uid":tp.pianoId.getUser() != null ? tp.pianoId.getUser().uid : '',
+                            "packValue":stateView.term.chargeAmount.toString(),
+                            "packName":stateView.term.name,
+                            "packCurrency":stateView.term.chargeCurrency,
+                            "resource":stateView.term.resource.rid,
+                            "term":stateView.term.termId,
+                            "platform":thgpiplatform()
+                        } 
+                    });
+				 } catch(e) {
+					 console.error(e);
+				 }
+				break;
+		}
+
+       }
+       function onCustomEvent(event){
+         if(typeof event.eventName !="undefined" && event.eventName == "AndroidInApp"){
+           if (typeof Android.subscriptionPlan == "function") {
+          Android.subscriptionPlan(event.params.productid, event.params.termid,event.params.planname, event.params.amount, event.params.planvalidity, "","", "");
+}
+         }
+        else if(typeof event.eventName !="undefined" && event.eventName == "newsletter-signup-submit"){
+
+if ((typeof event.params.email != 'undefined') && (event.params.email.length > 0) && checkEmail(event.params.email)) {
+dataLayer.push({
+"event":"newsletter_subscription",
+"data": {
+"email":event.params.email,
+"name":event.params.newslettername,
+
+}
+});
+}
+}
+else if(typeof event.eventName !="undefined" && event.eventName == "esp-newsletter"){
+                 var email = '';
+          var MailingIds = '';
+          var espUrl = '';
+            	var params;
+            	var iframeId;
+         		 params = JSON.parse(event.params.params);
+         		   iframeId = params.iframeId;
+         		if ((typeof event.params.espurl != 'undefined') && (event.params.espurl.length > 0)) {
+                    espUrl = event.params.espurl;
+                }
+   if ((typeof event.params.email != 'undefined') && (event.params.email.length > 0)) {
+                    email = event.params.email;
+                }
+  				else{
+if ((typeof event.params.mailingid != 'undefined') && (event.params.mailingid.length > 0)) {
+                  	document.querySelector(".thgsignin").click();
+					createCookie("th-newletter","true",0)
+}
+                }
+          	if ((typeof event.params.mailingid != 'undefined') && (event.params.mailingid.length > 0)) {
+                    MailingIds = event.params.mailingid;
+					MailingIds = MailingIds.split(',');
+                }
+if ( (espUrl.length > 0) &&  (MailingIds.length > 0) &&  (email.length > 0)) {
+				fetch(espUrl, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({"email": email,"sqids": MailingIds})
+}).then(function(response) {
+		return response.json();
+}).then(function(result) {
+	if(result.code == 200){
+      sendPostMessageToPiano(iframeId, false, '', {"showid":event.params.showid,"hideid":event.params.hideid});
+    }
+});
+}         
+               
+        }
+          
+        else if(typeof event.eventName !="undefined" && event.eventName == "paytm-email"){
+                 var email = '';
+          var termId = '';
+          var amount = '';
+            	var params;
+            	var iframeId;
+         		 params = JSON.parse(event.params.params);
+         		   iframeId = params.iframeId;
+                if ((typeof event.params.email != 'undefined') && (event.params.email.length > 0)) {
+                    email = event.params.email;
+                }
+         		if ((typeof event.params.termid != 'undefined') && (event.params.termid.length > 0)) {
+                    termId = event.params.termid;
+                }
+          	if ((typeof event.params.amount != 'undefined') && (event.params.amount.length > 0)) {
+                    amount = event.params.amount;
+                }
+				if(!checkEmail(email)){
+                  sendPostMessageToPiano(iframeId, false, 'You have entered an invalid email', 'email');
+                }
+				else{
+                 dataLayer.push({
+                "event":"complete_transaction",
+                "data": { 
+                    "email":email,
+                    "packValue":amount,
+                    "term":termId,       
+                    "platform":thgpiplatform()
+                } 
+            });
+                  location.href =  event.params.paymentlink;
+                }
+        }
+        else if(typeof event.eventName !="undefined" && event.eventName == "paymentselect"){
+                if(event.params.paymentmethod == 'pay_u_india_cc'){thgpiuserplandetails.paymentmode="Debit/Credit Card";}
+				else if(event.params.paymentmethod == 'pay_u_india_nb'){thgpiuserplandetails.paymentmode="Net Banking"}
+				else if(event.params.paymentmethod == 'pay_u_india_upi'){thgpiuserplandetails.paymentmode="UPI"}
+				else if(typeof event.params.paymentmethod !='undefined' && event.params.paymentmethod !=''){thgpiuserplandetails.paymentmode=event.params.paymentmethod}
+            }
+            try {
+                if(thgpiuserplandetails.paymentmode !=''){
+                thgpicreateCookie("thgpipaymentMode",thgpiuserplandetails.paymentmode,0.2);
+				  dataLayer.push({
+                        "event":"payment_selected",
+                        "data": { 
+                            "planDuration":thgpiuserplandetails.planDuration,
+                            "email":tp.pianoId.getUser() != null ? tp.pianoId.getUser().email : '',
+                            "uid":tp.pianoId.getUser() != null ? tp.pianoId.getUser().uid : '',
+                            "packValue":thgpiuserplandetails.packValue,
+                            "packName":thgpiuserplandetails.packName,
+                            "packCurrency":thgpiuserplandetails.packCurrency,
+                            "resource":thgpiuserplandetails.resource,
+                            "term":thgpiuserplandetails.term,
+                            "paymentSelected":thgpiuserplandetails.paymentmode,             
+                            "platform":thgpiplatform()
+                        } 
+                    });
+                }
+				 } catch(e) {
+					 console.error(e);
+				 }
+         
+         typeof __thg_event != "undefined" ? __thg_event.triggercustomEvent(event): null;
+       }
+       function onSubmitPayment(data){
+						
+        try {
+            if(typeof data.term.chargeAmount != "undefined" && data.term.chargeCurrency != null) {
+                dataLayer.push({
+                "event":"complete_transaction",
+                "data": { 
+                    "planDuration":data.term.firstPeriod,
+                    "email":tp.pianoId.getUser() != null ? tp.pianoId.getUser().email : '',
+                    "uid":tp.pianoId.getUser() != null ? tp.pianoId.getUser().uid : '',
+                    "packValue":data.term.chargeAmount.toString(),
+                    "packName":data.term.name,
+                    "packCurrency":data.term.chargeCurrency,
+                    "resource":data.term.resource.rid,
+                    "term":data.term.termId,
+                    "paymentSelected":thgpiuserplandetails.paymentmode,    
+                    "autoRenew":data.term.forceAutoRenew,         
+                    "platform":thgpiplatform()
+                } 
+            });
+            }
+            
+        } catch(e) {
+                console.error(e);
+        }
+       }
+
+    tp.push(["setAid", 'DC3REpZYpu']);
+    tp.push(["setCxenseSiteId", "1129576936026899562"])
+    tp.push(["setEndpoint", 'https://buy.tinypass.com/api/v3']);
+    tp.push(["setUseTinypassAccounts", false ]);
+    tp.push(["setUsePianoIdUserProvider", true ]);
+
+    /* checkout related events */
+    tp.push(["addHandler", "checkoutComplete", onCheckoutComplete]);
+    tp.push(["addHandler", "checkoutClose", onCheckoutClose]);
+    tp.push(["addHandler", "checkoutCustomEvent", onCheckoutExternalEvent]);
+    tp.push(["addHandler", "checkoutCancel", onCheckoutCancel]);
+    tp.push(["addHandler", "checkoutError", onCheckoutError]);
+    tp.push(["addHandler", "checkoutSubmitPayment", onCheckoutSubmitPayment]);
+    tp.push(["addHandler", "checkoutStateChange", onCheckoutStateChange]);
+    /* user login events */
+    tp.push(["addHandler", "loginRequired", onLoginRequired]);
+    tp.push(["addHandler", "loginSuccess", onLoginSuccess]);
+
+    /* meter related */
+    tp.push(["addHandler", "meterExpired", onMeterExpired]);
+    tp.push(["addHandler", "meterActive", onMeterActive]);
+
+    tp.push(["addHandler", "experienceExecute", onExperienceExecute]);
+    tp.push(["addHandler", "experienceExecutionFailed", onExperienceExecutionFailed]);
+
+    /* external checkout related events */
+    tp.push(["addHandler", "externalCheckoutComplete", onExternalCheckoutComplete]);
+	tp.push(["addHandler", "customEvent",onCustomEvent]);
+    tp.push( [ "addHandler", "submitPayment",onSubmitPayment]);
+    tp.push(["setDataLayerEnabled", true]);
+     if(window.location.host == "crossword.thehindu.com"){
+   		 tp.push(["setCookieDomain", '.crossword.thehindu.com']);
+     }else{
+      	 tp.push(["setCookieDomain", '.www.thehindu.com']); 
+     }
+    tp.push(["init", function () {
+        tp.experience.init();
+        tp.zIndexes.backdrop=99999999;tp.zIndexes.modal=999999999999;
+        if (!tp.user.isUserValid()) {
+            var tokenMatch = location.search.match(/reset_token=([A-Za-z0-9]+)/);
+            if (tokenMatch) {
+                var token = tokenMatch[1];
+                tp.pianoId.show({
+                    'resetPasswordToken': token
+                });
+            }
+         }
+       if(location.pathname == "/login/"){
+        tp.amp.showLogin();
+      }else if(location.pathname == "/logout/"){
+       tp.amp.logout();
+      }
+      tp.pianoId.init({
+        displayMode: 'modal',
+    profileUpdate: function(data) {
+        if (typeof updateprofile == "function") {
+           updateprofile(data)
+        }
+           
+    }
+});
+    }]);
+})();
+
+
+    // do not change this section
+    // |BEGIN INCLUDE TINYPASS JS|
+    (function(src){var a=document.createElement("script");a.type="text/javascript";a.async=true;a.src=src;var b=document.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b)})("//cdn.tinypass.com/api/tinypass.min.js");
+    // |END   INCLUDE TINYPASS JS|
+window.onmessage = function(event) {
+	if (event.data && event.data.event_id == "mysubscription") {
+		var iframeIdUrl = event.data.data.url;
+      var iframeId = getUrlParameter("iframeId",iframeIdUrl);
+       console.log(getUrlParameter("iframeId===",iframeId))
+       tp.api.callApi("/access/list", {cross_app:true,active:false}, function(data) { 
+           sendPostMessageToPiano(iframeId, false, 'AccessList', {"data":data,"aid":tp.aid});                                             
+       });
+    }
+  else if (event.data && event.data.event_id == "invoice_option_1") {
+    location.href = "https://pay.hindu.com/pianoasyncpay/pianoasyncpay.jsp?a_id="+tp.aid+"&return_url="+encodeURIComponent(window.location.href)+"&user_payment_id="+event.data.data.paymentId + "&pubn_code=TH&source=inbaf"+ "&access_id="+event.data.data.termConversionId;
+}
+  	else if (event.data && event.data.event_id == "myaccount_url") {
+      var newUrl = new URL(window.location.href);
+		if(typeof event.data.data.name != "undefined"){
+			var search_params = newUrl.searchParams;
+			search_params.set('tab', event.data.data.name);
+          history.pushState({}, null, newUrl.toString());
+        }
+	
+    }
+  else if (event.data && event.data.event_id == "logout") {
+
+	if(location.pathname == '/app/myaccount/'){
+       try {
+       	messageHandler.postMessage("logout")
+      }
+      catch(err) {
+        console.error(err)
+      }
+    }else{
+       if (window.webkit){
+        window.webkit.messageHandlers.logoutFromDevice.postMessage({
+                 name : "User logout" 
+        })
+     }
+    }
+    try {
+      const user_sess_ep = "https://www.thehindu.com/usersessions";
+
+      const user_sess_req_headers = new Headers();
+      user_sess_req_headers.append("Content-Type", "application/json");
+      user_sess_req_headers.append("x-client-auth", tp.pianoId.getToken());
+
+      const user_sess_req_options = {
+        method: "POST",
+        headers: user_sess_req_headers,
+        body: JSON.stringify({
+          type: "piano",
+          session_ids: [
+            { [tp.pianoId.getUser().uid]: tp.pianoId.getToken() },
+          ],
+        }),
+      };
+
+      fetch(user_sess_ep, user_sess_req_options)
+        .then(function(res) {
+        if (!res.ok) {
+          console.log("user session request status code: ", res.status);
+        }
+      })
+        .catch(function(err) {
+            console.log(err)
+            })
+        .finally(function() {
+            tp.pianoId.logout()
+            });
+    } catch (err) {
+      console.log("user session request internal error!!", err);
+      tp.pianoId.logout();
+    }
+    
+     if (typeof Android.logoutFromDevice == "function"){
+    	Android.logoutFromDevice()
+     }
+  }
+  else if (event.data && event.data.event_id == "thcustomnewsletter") {
+    var iframeId = getUrlParameter("iframeId",event.data.data.url);
+    var email = tp.pianoId.getUser() != null ? tp.pianoId.getUser().email : "";
+    var espUrl = event.data.data.espurl;
+    var MailingIds = event.data.data.mailingid;
+    MailingIds = MailingIds.split(",");
+    if (espUrl.length > 0 && MailingIds.length > 0 && email.length > 0 && readCookie("th-newletter") == "true") {
+      fetch(espUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: email, sqids: MailingIds }),
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (result) {
+          if (result.code == 200) {
+            sendPostMessageToPiano(iframeId, false, "", {
+              showid:event.data.data.showid,
+              hideid: event.data.data.hideid,
+            });
+          }
+        });
+    }
+  }
+   	else if (event.data && event.data.event_id == "deleteAccount") {
+     var iframeIdUrl = event.data.data.url;
+      var iframeId = getUrlParameter("iframeId",iframeIdUrl);
+      
+      var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("x-client-auth", tp.pianoId.getToken());
+var raw = JSON.stringify({
+  "sourceSystemName": "web",
+  "dataSubjectEmail": tp.pianoId.getUser().email,
+  "dataSubjectPhone": "",
+  "aid":tp.aid,
+  "dataSubjectUID": tp.pianoId.getUser().uid,
+   "remarks": typeof event.data.data.deleteReason != "undefined" ? event.data.data.deleteReason : "",
+  "DSAR_Category": "Right to Erasure"
+});
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+};
+  fetch("https://uf.thehindu.com/forgetme", requestOptions).then(function(response) {
+    if(response.ok) {
+    return response.json();
+    }
+    }).then(function(result) {
+      if(result.code == 0){
+          sendPostMessageToPiano(iframeId, false, 'dsarref', {"data":result,"aid":tp.aid});
+      }
+            else{
+              console.log(error);
+            }
+    
+    }).catch(function(error) {
+    console.log(error);
+    });
+    }
+  	else if (event.data && event.data.event_id == "bookmarklist") {
+      	var iframeIdUrl = event.data.data.url;
+      var iframeId = getUrlParameter("iframeId",iframeIdUrl);
+      var myHeaders = new Headers();
+myHeaders.append("x-client-auth", tp.pianoId.getToken());
+                 var requestOptions = {
+  method: 'GET',
+  headers: myHeaders,
+};
+      fetch("https://uf.thehindu.com/favourites?articledetails=true&userId="+tp.pianoId.getUser().uid+"&pub=th", requestOptions).then(function(response) {
+    if(response.ok) {
+    return response.json();
+    }
+    }).then(function(result) {
+     sendPostMessageToPiano(iframeId, false, 'bookmarklist', {"data":result,"aid":tp.aid}); 
+    }).catch(function(error) {
+    console.log(error);
+    });
+    }
+  	else if (event.data && event.data.event_id == "triggerCheckout") {
+      var term_id = [];
+      term_id.push(event.data.data.term_id)
+     	tp.offer.show({
+		offerId: "OFKS24SUVPMO",
+		displayMode: "modal",
+		termIds:  term_id
+	 });
+    }
+   else if (event.data && event.data.event_id == "bookmarklistdelete") {	
+      	var iframeIdUrl = event.data.data.url;	
+      var artid = event.data.data.artId;	
+    addOrRemoveFavourites(artid,'DELETE')
+    }
+};
+function sendPostMessageToPiano(iframeId, success, message, object) {
+    var iframe = $('#' + iframeId);
+    if (iframe.length) {
+        iframe[0].contentWindow.postMessage({
+            piano: {
+                success: success,
+                message: message,
+                object: object
+            }
+        }, '*');
+    }
+}function checkEmail(email){var mailValidation = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{1,66})\.([A-Za-z]{2,6}(?:\.[A-Za-z]{2})?)$/;if(!mailValidation.test(email) ){return false}else{return true}}
+
+function updateprofile(data) {function isBlank(e){return!e||/^\s*$/.test(e)}tp.pianoId.loadExtendedUser({extendedUserLoaded:function(e){if("object"==typeof e.custom_field_values&&e.custom_field_values.length>0){dataLayer=window.dataLayer||[];var a={};e.custom_field_values.forEach(function(e){isBlank(e.value)||(a[e.field_name]=e.value)}),Object.keys(a.length>0)&&dataLayer.push({event:"profile_updated",data:a})}},formName:"MyAccountFields"});}
+

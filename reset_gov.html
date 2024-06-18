@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset Password</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+        transition: background-image 1s ease-in-out;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+    }
+
+    .container {
+        width: 300px;
+        margin: auto;
+        margin-top: 100px;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        color: black;
+    }
+
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        background-color: green;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    .message {
+        margin-bottom: 20px;
+        text-align: center;
+        display: none; /* Hide the message by default */
+    }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="message" id="successMessage">
+        Password successfully reset!
+    </div>
+    <h2>Reset Password</h2>
+    <form id="resetForm" action="/submit-new-password" method="post">
+      <label for="new-password">New Password:</label>
+      <input type="password" id="new-password" name="new-password" required placeholder="Enter new password">
+      
+      <label for="confirm-password">Confirm New Password:</label>
+      <input type="password" id="confirm-password" name="confirm-password" required placeholder="Confirm new password">
+      
+      <input type="submit" value="Reset Password">
+    </form>
+  </div>
+
+<script>
+document.getElementById("resetForm").addEventListener("submit", function(event){
+    event.preventDefault(); // Prevent form submission
+    document.getElementById("successMessage").style.display = "block"; // Show success message
+    setTimeout(function(){
+        window.location.href = "govlogin.html"; // Redirect after showing message
+    }, 2000); // 2 seconds delay
+});
+
+const backgroundImages = [
+    'url("sunflower.jpg")',
+    'url("base_price3.jpg")',
+    'url("farmer_gov2.jpg")'
+];
+
+let currentImageIndex = 0;
+
+function changeBackgroundImage() {
+    currentImageIndex = (currentImageIndex + 1) % backgroundImages.length;
+    document.body.style.backgroundImage = backgroundImages[currentImageIndex];
+}
+
+setInterval(changeBackgroundImage, 5000); // Change image every 5 seconds
+
+// Initialize background image
+document.body.style.backgroundImage = backgroundImages[currentImageIndex];
+</script>
+</body>
+</html>

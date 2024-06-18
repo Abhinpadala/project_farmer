@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approved Products</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            background-color: #f5f5f5;
+            background-image: url('C.jpg');
+            background-size: cover;
+            background-position: center;
+            animation: changeBackground 10s infinite alternate;
+        }
+
+        @keyframes changeBackground {
+            0% { background-image: url('s.jpg'); }
+            50% { background-image: url('pk.jpg'); }
+            100% { background-image: url('C.jpg'); }
+        }
+
+        h1 {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #006400;
+            color: white;
+        }
+
+        .downloadButton {
+            background-color: darkgreen;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Approved Products</h1>
+    <table id="productTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Mobile Number</th>
+                <th>Aadhar Number</th>
+                <th>Survey</th>
+                <th>Product</th>
+                <th>Grade</th>
+                <th>Quantity</th>
+                <th>Fair Price</th>
+                <th>Download</th>
+            </tr>
+        </thead>
+        <tbody id="productData">
+            <!-- Product data will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to handle button click for downloading receipt
+        function downloadReceipt(product, grade, quantity, fairPrice) {
+            const message = "Your product is approved.\n\n";
+            const receiptContent = `${message}Product: ${product}\nGrade: ${grade}\nQuantity: ${quantity}\nFair Price: ${fairPrice}`;
+            const blob = new Blob([receiptContent], { type: 'text/plain' });
+            const anchor = document.createElement('a');
+            anchor.href = window.URL.createObjectURL(blob);
+            anchor.download = `${product}_receipt.txt`;
+            anchor.click();
+        }
+
+        // Fetch data from fapproved.php
+        fetch('fapproved.php')
+            .then(response => response.json())
+            .then(data => {
+                const productData = document.getElementById('productData');
+
+                data.forEach(product => {
+                    // Create a table row for each product
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.mobile_number}</td>
+                        <td>${product.aadhar_number}</td>
+                        <td>${product.survey}</td>
+                        <td>${product.product}</td>
+                        <td>${product.grade}</td>
+                        <td>${product.quantity}</td>
+                        <td>${product.adjusted_price}</td>
+                        <td><button class="downloadButton" onclick="downloadReceipt('${product.product}', '${product.grade}', ${product.quantity}, ${product.adjusted_price})">Download Receipt</button></td>
+                    `;
+                    productData.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Button</title>
+  <style>
+    @keyframes changeBackground {
+      0% { background-image: url('market.jpg'); }
+      33% { background-image: url('market1.jpg'); }
+      66% { background-image: url('market2.jpg'); }
+      100% { background-image: url('market1.jpg'); }
+    }
+
+    body, html {
+      height: 100%; /* Set height of both body and html to 100% */
+      margin: 0; /* Remove default margin */
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      animation: changeBackground 15s infinite; /* 15 seconds for the full cycle */
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .button-container {
+      text-align: center; /* Align buttons in the center horizontally */
+    }
+
+    .market-button {
+      display: block; /* Display buttons as block-level elements */
+      padding: 20px 40px; /* Increased padding */
+      font-size: 24px; /* Increased font size */
+      background-color: green; /* Green */
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 10px; /* Add space between Market button and other buttons */
+      width: 200px; /* Set width to ensure all buttons have the same size */
+    }
+
+    .market-button:hover {
+      background-color: #45a049; /* Darker green */
+    }
+  </style>
+</head>
+<body>
+  <div class="button-container">
+    <form action="#">
+      <button type="submit" class="market-button" formaction="pavan.html">Market</button>
+      <button type="submit" class="market-button" formaction="approved.html">Approved</button>
+      <button type="submit" class="market-button" formaction="declined.html">Declined</button>
+    </form>
+  </div>
+</body>
+</html>

